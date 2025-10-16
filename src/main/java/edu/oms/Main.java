@@ -1,14 +1,18 @@
 package edu.oms;
 
+import edu.oms.vista.VentanaPrincipal;
+import javafx.application.Application;
+import javafx.stage.Stage;
 
-public class Main {
+public class Main extends Application {
+
+    @Override
+    public void start(Stage primaryStage) {
+        VentanaPrincipal ventanaPrincipal = new VentanaPrincipal(primaryStage);
+        ventanaPrincipal.mostrar();
+    }
+
     public static void main(String[] args) {
-
-        System.out.printf("Hello and welcome!");
-
-        for (int i = 1; i <= 5; i++) {
-
-            System.out.println("i = " + i);
-        }
+        launch(args); // Lanzo JavaFX
     }
 }
