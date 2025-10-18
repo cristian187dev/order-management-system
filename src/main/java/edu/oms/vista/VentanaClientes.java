@@ -26,9 +26,10 @@ public class VentanaClientes {
         });
 
         btnListar.setOnAction(e -> {
-            //mensaje de prueba
-            System.out.println("Listar clientes...");
+            VentanaListarClientes ventanaListarClientes = new VentanaListarClientes(stage);
+            ventanaListarClientes.mostrar();
         });
+
 
         btnVolver.setOnAction(e -> {
             VentanaPrincipal ventanaPrincipal = new VentanaPrincipal(stage);
@@ -41,7 +42,7 @@ public class VentanaClientes {
         layout.getChildren().addAll(btnAgregar, btnListar, btnVolver);
 
         // Escena
-        Scene scene = new Scene(layout, 400, 300);
+        Scene scene = new Scene(layout, 1200, 800);
         stage.setTitle("Gestión de Clientes");
         stage.setScene(scene);
         stage.show();

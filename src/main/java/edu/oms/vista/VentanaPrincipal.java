@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 public class VentanaPrincipal {
 
     private final Stage stage;
-
+        //Constructor
     public VentanaPrincipal(Stage stage) {
         this.stage = stage;
     }
@@ -32,7 +32,7 @@ public class VentanaPrincipal {
         layout.getChildren().addAll(btnClientes, btnSalir);
 
         // Escena
-        Scene scene = new Scene(layout, 400, 300);
+        Scene scene = new Scene(layout, 1200, 800);
         stage.setTitle("Sistema de Gestión - Menú Principal");
         stage.setScene(scene);
         stage.show();

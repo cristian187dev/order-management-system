@@ -30,9 +30,9 @@ CREATE TABLE Clientes (
     telefono VARCHAR(20) UNIQUE NOT NULL,
     direccion VARCHAR(100),
     cuil VARCHAR(20),
-    estado_usuario VARCHAR(20),
+    estado_usuario VARCHAR(10) NOT NULL DEFAULT 'ACTIVO',
     fecha_inicio DATE,
-    fecha_fin DATE
+    fecha_fin DATE DEFAULT NULL
 );
 
 -- Tabla: Productos
