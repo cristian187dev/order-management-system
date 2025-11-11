@@ -28,7 +28,7 @@ public class VentanaPreciosEspeciales {
         layout.setStyle("-fx-alignment: center; -fx-background-color: #f8f9fa;");
         layout.getChildren().addAll(btnAgregar, btnListar, btnVolver);
 
-        stage.setScene(new Scene(layout, 800, 600));
+        stage.setScene(new Scene(layout, 1200, 800));
         stage.setTitle("Gestión de Precios Especiales");
         stage.show();
     }

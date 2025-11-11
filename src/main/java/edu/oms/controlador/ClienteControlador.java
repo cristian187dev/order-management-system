@@ -30,4 +30,20 @@ public class ClienteControlador {
     public List<Cliente> listarClientes() throws SQLException {
         return servicio.obtenerClientes();
     }
+
+    public List<Cliente> listarClientesActivos() throws SQLException {
+        return servicio.obtenerClientesPorEstado("ACTIVO");
+    }
+
+    public List<Cliente> listarClientesInactivos() throws SQLException {
+        return servicio.obtenerClientesPorEstado("INACTIVO");
+    }
+
+    public void desactivarCliente(int idCliente) throws SQLException {
+        servicio.actualizarEstadoCliente(idCliente, "INACTIVO", LocalDate.now());
+    }
+
+    public void activarCliente(int idCliente) throws SQLException {
+        servicio.actualizarEstadoCliente(idCliente, "ACTIVO", null);
+    }
 }

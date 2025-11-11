@@ -30,17 +30,33 @@ CREATE TABLE Clientes (
     telefono VARCHAR(20) UNIQUE NOT NULL,
     direccion VARCHAR(100),
     cuil VARCHAR(20),
-    estado_usuario VARCHAR(10) NOT NULL DEFAULT 'ACTIVO',
+    estado_usuario VARCHAR(20),
     fecha_inicio DATE,
-    fecha_fin DATE DEFAULT NULL
+    fecha_fin DATE
 );
+
+-- Tabla: Unidades_medida
+CREATE TABLE Unidades_medida (
+    id_unidad INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(50) NOT NULL UNIQUE,
+    abreviatura VARCHAR(10) NOT NULL,
+    activo TINYINT(1) NOT NULL DEFAULT 1
+);
+
+-- Datos iniciales
+INSERT INTO Unidades_medida (nombre, abreviatura) VALUES
+('Kilogramo', 'kg'),
+('Gramo', 'g'),
+('Unidad', 'u'),
+('Docena', 'dz');
 
 -- Tabla: Productos
 CREATE TABLE Productos (
     id_producto INT PRIMARY KEY AUTO_INCREMENT,
-    nombre_producto VARCHAR(100),
-    unidad_medida VARCHAR(20),
-    stock_actual DECIMAL(10,2)
+    nombre_producto VARCHAR(100) NOT NULL,
+    id_unidad INT NOT NULL,
+    stock_actual DECIMAL(10,2),
+    FOREIGN KEY (id_unidad) REFERENCES Unidades_medida(id_unidad)
 );
 
 -- Tabla: Precios_Productos_Base
@@ -107,7 +123,7 @@ CREATE TABLE Detalles_Subpedidos (
     id_detalle_sub INT PRIMARY KEY AUTO_INCREMENT,
     id_subpedido INT,
     id_tipo_extra INT,
-    id_producto INT, 
+    id_producto INT,
     cantidad DECIMAL(10,2),
     precio_unitario DECIMAL(10,2),
     FOREIGN KEY (id_subpedido) REFERENCES Subpedidos(id_subpedido),

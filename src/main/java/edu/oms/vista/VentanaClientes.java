@@ -1,5 +1,7 @@
 package edu.oms.vista;
 
+import edu.oms.controlador.ClienteControlador;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
@@ -8,6 +10,7 @@ import javafx.stage.Stage;
 public class VentanaClientes {
 
     private final Stage stage;
+    private final ClienteControlador controlador = new ClienteControlador();
 
     public VentanaClientes(Stage stage) {
         this.stage = stage;
@@ -16,7 +19,7 @@ public class VentanaClientes {
     public void mostrar() {
         // Botones
         Button btnAgregar = new Button("Agregar Cliente");
-        Button btnListar = new Button("Listar Clientes");
+        Button btnListar = new Button("Listar Clientes (Activos / Inactivos)");
         Button btnVolver = new Button("Volver al Menú Principal");
 
         // Acciones
@@ -26,10 +29,9 @@ public class VentanaClientes {
         });
 
         btnListar.setOnAction(e -> {
-            VentanaListarClientes ventanaListarClientes = new VentanaListarClientes(stage);
-            ventanaListarClientes.mostrar();
+            VentanaListarClientes ventanaListar = new VentanaListarClientes(stage);
+            ventanaListar.mostrar();
         });
-
 
         btnVolver.setOnAction(e -> {
             VentanaPrincipal ventanaPrincipal = new VentanaPrincipal(stage);
@@ -38,7 +40,8 @@ public class VentanaClientes {
 
         // Diseño
         VBox layout = new VBox(20);
-        layout.setStyle("-fx-padding: 30; -fx-alignment: center; -fx-background-color: #e9f5ff;");
+        layout.setPadding(new Insets(30));
+        layout.setStyle("-fx-background-color: #e9f5ff; -fx-alignment: center;");
         layout.getChildren().addAll(btnAgregar, btnListar, btnVolver);
 
         // Escena

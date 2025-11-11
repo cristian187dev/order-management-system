@@ -6,11 +6,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class ProductoControlador {
-
     private final ProductoServicio servicio = new ProductoServicio();
 
-    public void agregarProducto(String nombre, String unidad, double stock) throws SQLException {
-        Producto p = new Producto(nombre, unidad, stock);
+    public void agregarProducto(String nombre, int idUnidad, double stock) throws SQLException {
+        Producto p = new Producto(nombre, idUnidad, stock);
         servicio.guardarProducto(p);
     }
 

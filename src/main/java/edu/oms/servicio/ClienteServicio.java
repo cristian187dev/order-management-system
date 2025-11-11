@@ -18,17 +18,22 @@ public class ClienteServicio {
         if (c.getTelefono() == null || c.getTelefono().isBlank())
             throw new IllegalArgumentException("El teléfono es obligatorio.");
 
-        // Sino tiene fecha, la asigno
         if (c.getFechaInicio() == null)
             c.setFechaInicio(LocalDate.now());
 
-        // Fecha fin NULL por defecto
         c.setFechaFin(null);
-
         clienteDAO.insertar(c);
     }
 
     public List<Cliente> obtenerClientes() throws SQLException {
         return clienteDAO.obtenerTodos();
+    }
+
+    public List<Cliente> obtenerClientesPorEstado(String estado) throws SQLException {
+        return clienteDAO.obtenerPorEstado(estado);
+    }
+
+    public void actualizarEstadoCliente(int idCliente, String nuevoEstado, LocalDate fechaFin) throws SQLException {
+        clienteDAO.actualizarEstado(idCliente, nuevoEstado, fechaFin);
     }
 }
