@@ -14,6 +14,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class VentanaListarPedidos {
@@ -60,9 +61,15 @@ public class VentanaListarPedidos {
         colAcciones.setCellFactory(col -> new TableCell<>() {
             private final Button btnEditar = new Button("Modificar");
             private final Button btnEliminar = new Button("Eliminar");
-            private final HBox box = new HBox(5, btnEditar, btnEliminar);
+            private final Button btnVer = new Button("Ver Detalles");
+            private final HBox box = new HBox(5, btnVer, btnEditar, btnEliminar);
 
             {
+                btnVer.setOnAction(e -> {
+                    Pedido pedido = getTableView().getItems().get(getIndex());
+                    new VentanaListarDetallesPedido(stage, pedido.getIdPedido()).mostrar();
+                });
+
                 btnEditar.setOnAction(e -> {
                     Pedido pedido = getTableView().getItems().get(getIndex());
                     new VentanaModificarPedido(stage, pedido).mostrar();
@@ -89,35 +96,58 @@ public class VentanaListarPedidos {
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(box);
-                }
+                setGraphic(empty ? null : box);
             }
         });
-        colAcciones.setPrefWidth(200);
+        colAcciones.setPrefWidth(260);
 
         tabla.getColumns().addAll(colId, colCliente, colFecha, colHora, colEstado, colObs, colAcciones);
 
+        DatePicker dpFecha = new DatePicker(LocalDate.now());
+        Button btnFiltrar = new Button("Filtrar por fecha");
+        Button btnTodos = new Button("Todos");
+
+        btnFiltrar.setOnAction(e -> {
+            LocalDate fecha = dpFecha.getValue();
+            if (fecha == null) return;
+            try {
+                ObservableList<Pedido> datos = FXCollections.observableArrayList(controlador.listarPedidosPorFecha(fecha));
+                tabla.setItems(datos);
+            } catch (SQLException ex) {
+                new Alert(Alert.AlertType.ERROR, "Error al filtrar pedidos: " + ex.getMessage()).showAndWait();
+            }
+        });
+
+        btnTodos.setOnAction(e -> cargarTodos(tabla));
+
+        HBox barraFiltro = new HBox(10, new Label("Fecha:"), dpFecha, btnFiltrar, btnTodos);
+        barraFiltro.setPadding(new Insets(10));
+
+        BorderPane root = new BorderPane();
+        root.setPadding(new Insets(15));
+        root.setTop(barraFiltro);
+        root.setCenter(tabla);
+
+        Button btnVolver = new Button("Volver");
+        btnVolver.setOnAction(e -> new VentanaPedidos(stage).mostrar());
+        BorderPane bottom = new BorderPane();
+        bottom.setPadding(new Insets(10));
+        bottom.setRight(btnVolver);
+        root.setBottom(bottom);
+
+        stage.setScene(new Scene(root, 1050, 550));
+        stage.setTitle("Listado de Pedidos");
+        stage.show();
+
+        cargarTodos(tabla);
+    }
+
+    private void cargarTodos(TableView<Pedido> tabla) {
         try {
-            ObservableList<Pedido> datos = FXCollections.observableArrayList(controlador.listarPedidos());
+            ObservableList<Pedido> datos = FXCollections.observableArrayList(new PedidoControlador().listarPedidos());
             tabla.setItems(datos);
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, "Error al cargar pedidos: " + e.getMessage()).showAndWait();
         }
-
-        Button btnVolver = new Button("Volver");
-        btnVolver.setOnAction(e -> new VentanaPedidos(stage).mostrar());
-
-        BorderPane root = new BorderPane();
-        root.setPadding(new Insets(15));
-        root.setCenter(tabla);
-        root.setBottom(btnVolver);
-        BorderPane.setMargin(btnVolver, new Insets(10));
-
-        stage.setScene(new Scene(root, 1000, 500));
-        stage.setTitle("Listado de Pedidos");
-        stage.show();
     }
 }

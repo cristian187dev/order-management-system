@@ -2,6 +2,7 @@ package edu.oms.controlador;
 
 import edu.oms.modelo.PrecioCliente;
 import edu.oms.servicio.PrecioClienteServicio;
+
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
@@ -22,5 +23,9 @@ public class PrecioClienteControlador {
 
     public void eliminarPrecioCliente(int idPrecioCliente) throws SQLException {
         servicio.eliminarPrecioCliente(idPrecioCliente);
+    }
+
+    public Double obtenerPrecioVigente(int idCliente, int idProducto, LocalDate fecha) throws SQLException {
+        return servicio.obtenerPrecioVigente(idCliente, idProducto, fecha);
     }
 }

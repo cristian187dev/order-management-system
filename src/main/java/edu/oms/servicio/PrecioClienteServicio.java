@@ -2,6 +2,7 @@ package edu.oms.servicio;
 
 import edu.oms.dao.PrecioClienteDAO;
 import edu.oms.modelo.PrecioCliente;
+
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
@@ -17,10 +18,8 @@ public class PrecioClienteServicio {
             throw new IllegalArgumentException("Debe seleccionar un producto válido.");
         if (pc.getPrecioUnitario() <= 0)
             throw new IllegalArgumentException("El precio debe ser mayor a 0.");
-
         if (pc.getFechaInicioPrecio() == null)
             pc.setFechaInicioPrecio(LocalDate.now());
-
         dao.insertar(pc);
     }
 
@@ -30,5 +29,9 @@ public class PrecioClienteServicio {
 
     public void eliminarPrecioCliente(int idPrecioCliente) throws SQLException {
         dao.eliminar(idPrecioCliente);
+    }
+
+    public Double obtenerPrecioVigente(int idCliente, int idProducto, LocalDate fecha) throws SQLException {
+        return dao.obtenerPrecioVigente(idCliente, idProducto, fecha);
     }
 }
