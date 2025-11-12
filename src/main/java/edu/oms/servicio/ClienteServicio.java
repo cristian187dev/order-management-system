@@ -8,32 +8,39 @@ import java.util.List;
 
 public class ClienteServicio {
 
-    private final ClienteDAO clienteDAO = new ClienteDAO();
+    private final ClienteDAO dao = new ClienteDAO();
 
-    public void guardarCliente(Cliente c) throws SQLException {
-        if (c.getNombre() == null || c.getNombre().isBlank())
-            throw new IllegalArgumentException("El nombre es obligatorio.");
-        if (c.getApellido() == null || c.getApellido().isBlank())
-            throw new IllegalArgumentException("El apellido es obligatorio.");
-        if (c.getTelefono() == null || c.getTelefono().isBlank())
-            throw new IllegalArgumentException("El teléfono es obligatorio.");
+    public void guardarCliente(Cliente cliente) throws SQLException {
+        if (cliente.getNombre() == null || cliente.getNombre().isBlank()) {
+            throw new IllegalArgumentException("El nombre no puede estar vacío.");
+        }
+        if (cliente.getApellido() == null || cliente.getApellido().isBlank()) {
+            throw new IllegalArgumentException("El apellido no puede estar vacío.");
+        }
+        if (cliente.getTelefono() == null || cliente.getTelefono().isBlank()) {
+            throw new IllegalArgumentException("El teléfono no puede estar vacío.");
+        }
 
-        if (c.getFechaInicio() == null)
-            c.setFechaInicio(LocalDate.now());
+        if (cliente.getFechaInicio() == null) {
+            cliente.setFechaInicio(LocalDate.now());
+        }
 
-        c.setFechaFin(null);
-        clienteDAO.insertar(c);
+        dao.insertar(cliente);
     }
 
-    public List<Cliente> obtenerClientes() throws SQLException {
-        return clienteDAO.obtenerTodos();
+    public List<Cliente> obtenerClientesActivos() throws SQLException {
+        return dao.obtenerActivos();
     }
 
-    public List<Cliente> obtenerClientesPorEstado(String estado) throws SQLException {
-        return clienteDAO.obtenerPorEstado(estado);
+    public List<Cliente> obtenerClientesInactivos() throws SQLException {
+        return dao.obtenerInactivos();
     }
 
-    public void actualizarEstadoCliente(int idCliente, String nuevoEstado, LocalDate fechaFin) throws SQLException {
-        clienteDAO.actualizarEstado(idCliente, nuevoEstado, fechaFin);
+    public void desactivarCliente(int idCliente) throws SQLException {
+        dao.desactivarCliente(idCliente);
+    }
+
+    public void activarCliente(int idCliente) throws SQLException {
+        dao.activarCliente(idCliente);
     }
 }

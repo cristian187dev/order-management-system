@@ -20,7 +20,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
@@ -50,7 +49,8 @@ public class VentanaAgregarPedido {
         ComboBox<Cliente> comboClientes = new ComboBox<>();
         comboClientes.setPrefWidth(280);
         try {
-            List<Cliente> clientes = clienteControlador.listarClientes();
+
+            List<Cliente> clientes = clienteControlador.listarClientesActivos();
             comboClientes.setItems(FXCollections.observableArrayList(clientes));
             comboClientes.setCellFactory(param -> new ListCell<>() {
                 @Override
@@ -240,9 +240,9 @@ public class VentanaAgregarPedido {
         agregar.setPadding(new Insets(10));
         agregar.setVgap(8);
         agregar.setHgap(8);
-        agregar.add(lblProducto, 0, 0); agregar.add(comboProducto, 1, 0);
-        agregar.add(lblCantidad, 0, 1); agregar.add(txtCantidad, 1, 1);
-        agregar.add(lblPrecio, 0, 2); agregar.add(txtPrecio, 1, 2);
+        agregar.add(new Label("Producto:"), 0, 0); agregar.add(comboProducto, 1, 0);
+        agregar.add(new Label("Cantidad:"), 0, 1); agregar.add(txtCantidad, 1, 1);
+        agregar.add(new Label("Precio Unitario:"), 0, 2); agregar.add(txtPrecio, 1, 2);
         agregar.add(btnAgregarItem, 1, 3);
 
         HBox acciones = new HBox(10, btnListo, btnVolver);

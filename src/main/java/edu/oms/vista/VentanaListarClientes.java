@@ -30,7 +30,7 @@ public class VentanaListarClientes {
     }
 
     public void mostrar() {
-        // Tabs
+
         TabPane tabs = new TabPane();
         tabs.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
 
@@ -38,7 +38,6 @@ public class VentanaListarClientes {
         Tab tabInactivos = new Tab("Clientes Inactivos", construirContenidoInactivos());
         tabs.getTabs().addAll(tabActivos, tabInactivos);
 
-        // Volver
         Button btnVolver = new Button("Volver");
         btnVolver.setOnAction(e -> new VentanaClientes(stage).mostrar());
         HBox pie = new HBox(btnVolver);
@@ -80,7 +79,7 @@ public class VentanaListarClientes {
                             try {
                                 controlador.desactivarCliente(c.getIdCliente());
                                 tablaActivos.getItems().remove(c);
-                                // Lo pasamos al otro listado
+                                // Lo paso al otro listado
                                 refrescarInactivos();
                                 new Alert(Alert.AlertType.INFORMATION, "Cliente desactivado.").showAndWait();
                             } catch (SQLException ex) {
@@ -127,7 +126,7 @@ public class VentanaListarClientes {
                             try {
                                 controlador.activarCliente(c.getIdCliente());
                                 tablaInactivos.getItems().remove(c);
-                                // Lo pasamos al otro listado
+                                // Lo paso al otro listado
                                 refrescarActivos();
                                 new Alert(Alert.AlertType.INFORMATION, "Cliente activado.").showAndWait();
                             } catch (SQLException ex) {

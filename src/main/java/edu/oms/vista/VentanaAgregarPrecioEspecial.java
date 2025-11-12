@@ -41,9 +41,8 @@ public class VentanaAgregarPrecioEspecial {
         Button btnGuardar = new Button("Guardar");
         Button btnVolver = new Button("Volver");
 
-        // Cargar clientes
         try {
-            List<Cliente> clientes = clienteControlador.listarClientes();
+            List<Cliente> clientes = clienteControlador.listarClientesActivos();
             cmbCliente.setItems(FXCollections.observableArrayList(clientes));
             cmbCliente.setPromptText("Seleccione un cliente");
         } catch (SQLException e) {
@@ -65,7 +64,6 @@ public class VentanaAgregarPrecioEspecial {
             }
         });
 
-        // Cargar productos
         try {
             List<Producto> productos = productoControlador.listarProductos();
             cmbProducto.setItems(FXCollections.observableArrayList(productos));
