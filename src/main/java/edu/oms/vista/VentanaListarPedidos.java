@@ -59,20 +59,18 @@ public class VentanaListarPedidos {
 
         TableColumn<Pedido, Void> colAcciones = new TableColumn<>("Acciones");
         colAcciones.setCellFactory(col -> new TableCell<>() {
-            private final Button btnEditar = new Button("Modificar");
             private final Button btnEliminar = new Button("Eliminar");
             private final Button btnVer = new Button("Ver Detalles");
-            private final HBox box = new HBox(5, btnVer, btnEditar, btnEliminar);
+            private final HBox box = new HBox(5, btnVer, btnEliminar);
 
             {
                 btnVer.setOnAction(e -> {
                     Pedido pedido = getTableView().getItems().get(getIndex());
-                    new VentanaListarDetallesPedido(stage, pedido.getIdPedido()).mostrar();
-                });
-
-                btnEditar.setOnAction(e -> {
-                    Pedido pedido = getTableView().getItems().get(getIndex());
-                    new VentanaModificarPedido(stage, pedido).mostrar();
+                    new VentanaListarDetallesPedido(
+                            stage,
+                            pedido.getIdPedido(),
+                            pedido.getIdCliente()
+                    ).mostrar();
                 });
 
                 btnEliminar.setOnAction(e -> {
@@ -86,7 +84,8 @@ public class VentanaListarPedidos {
                                 controlador.eliminarPedido(pedido.getIdPedido());
                                 getTableView().getItems().remove(pedido);
                             } catch (SQLException ex) {
-                                new Alert(Alert.AlertType.ERROR, "Error al eliminar pedido: " + ex.getMessage()).showAndWait();
+                                new Alert(Alert.AlertType.ERROR,
+                                        "Error al eliminar pedido: " + ex.getMessage()).showAndWait();
                             }
                         }
                     });
@@ -99,7 +98,7 @@ public class VentanaListarPedidos {
                 setGraphic(empty ? null : box);
             }
         });
-        colAcciones.setPrefWidth(260);
+        colAcciones.setPrefWidth(200);
 
         tabla.getColumns().addAll(colId, colCliente, colFecha, colHora, colEstado, colObs, colAcciones);
 
@@ -111,10 +110,12 @@ public class VentanaListarPedidos {
             LocalDate fecha = dpFecha.getValue();
             if (fecha == null) return;
             try {
-                ObservableList<Pedido> datos = FXCollections.observableArrayList(controlador.listarPedidosPorFecha(fecha));
+                ObservableList<Pedido> datos =
+                        FXCollections.observableArrayList(controlador.listarPedidosPorFecha(fecha));
                 tabla.setItems(datos);
             } catch (SQLException ex) {
-                new Alert(Alert.AlertType.ERROR, "Error al filtrar pedidos: " + ex.getMessage()).showAndWait();
+                new Alert(Alert.AlertType.ERROR,
+                        "Error al filtrar pedidos: " + ex.getMessage()).showAndWait();
             }
         });
 
@@ -144,10 +145,12 @@ public class VentanaListarPedidos {
 
     private void cargarTodos(TableView<Pedido> tabla) {
         try {
-            ObservableList<Pedido> datos = FXCollections.observableArrayList(new PedidoControlador().listarPedidos());
+            ObservableList<Pedido> datos =
+                    FXCollections.observableArrayList(controlador.listarPedidos());
             tabla.setItems(datos);
         } catch (SQLException e) {
-            new Alert(Alert.AlertType.ERROR, "Error al cargar pedidos: " + e.getMessage()).showAndWait();
+            new Alert(Alert.AlertType.ERROR,
+                    "Error al cargar pedidos: " + e.getMessage()).showAndWait();
         }
     }
 }

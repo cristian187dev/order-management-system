@@ -2,6 +2,8 @@ package edu.oms.vista;
 
 import edu.oms.controlador.DetallePedidoControlador;
 import edu.oms.controlador.ProductoControlador;
+import edu.oms.controlador.PrecioClienteControlador;
+import edu.oms.controlador.PrecioProductoBaseControlador;
 import edu.oms.modelo.Producto;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -11,18 +13,23 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 
 public class VentanaAgregarDetallePedido {
 
     private final Stage stage;
     private final int idPedido;
+    private final int idCliente;
     private final DetallePedidoControlador detalleControlador = new DetallePedidoControlador();
     private final ProductoControlador productoControlador = new ProductoControlador();
+    private final PrecioClienteControlador precioClienteControlador = new PrecioClienteControlador();
+    private final PrecioProductoBaseControlador precioBaseControlador = new PrecioProductoBaseControlador();
 
-    public VentanaAgregarDetallePedido(Stage stage, int idPedido) {
+    public VentanaAgregarDetallePedido(Stage stage, int idPedido, int idCliente) {
         this.stage = stage;
         this.idPedido = idPedido;
+        this.idCliente = idCliente;
     }
 
     public void mostrar() {
@@ -50,11 +57,35 @@ public class VentanaAgregarDetallePedido {
                 }
             });
         } catch (SQLException e) {
-            new Alert(Alert.AlertType.ERROR, "Error al cargar productos: " + e.getMessage()).showAndWait();
+            new Alert(Alert.AlertType.ERROR,
+                    "Error al cargar productos: " + e.getMessage()).showAndWait();
         }
 
         TextField txtCantidad = new TextField();
         TextField txtPrecio = new TextField();
+
+        // Completar precio automáticamente según cliente y producto
+        Runnable completarPrecio = () -> {
+            Producto p = comboProducto.getValue();
+            if (p == null) return;
+            try {
+                LocalDate hoy = LocalDate.now();
+                Double precio = precioClienteControlador
+                        .obtenerPrecioVigente(idCliente, p.getIdProducto(), hoy);
+                if (precio == null) {
+                    precio = precioBaseControlador
+                            .obtenerPrecioBaseVigente(p.getIdProducto(), hoy);
+                }
+                if (precio != null && precio > 0) {
+                    txtPrecio.setText(String.valueOf(precio));
+                }
+            } catch (SQLException ex) {
+                new Alert(Alert.AlertType.ERROR,
+                        "Error al consultar precio: " + ex.getMessage()).showAndWait();
+            }
+        };
+
+        comboProducto.valueProperty().addListener((obs, o, n) -> completarPrecio.run());
 
         Button btnGuardar = new Button("Agregar");
         Button btnVolver = new Button("Volver");
@@ -63,31 +94,44 @@ public class VentanaAgregarDetallePedido {
             try {
                 Producto p = comboProducto.getValue();
                 if (p == null) {
-                    new Alert(Alert.AlertType.WARNING, "Seleccioná un producto.").showAndWait();
+                    new Alert(Alert.AlertType.WARNING,
+                            "Seleccioná un producto.").showAndWait();
                     return;
+                }
+
+                if (txtPrecio.getText().isBlank()) {
+                    completarPrecio.run();
                 }
 
                 double cantidad = Double.parseDouble(txtCantidad.getText());
                 double precio = Double.parseDouble(txtPrecio.getText());
+
                 detalleControlador.agregarDetalle(idPedido, p.getIdProducto(), cantidad, precio);
 
-                new Alert(Alert.AlertType.INFORMATION, "Producto agregado correctamente.").showAndWait();
+                new Alert(Alert.AlertType.INFORMATION,
+                        "Producto agregado correctamente.").showAndWait();
                 txtCantidad.clear();
                 txtPrecio.clear();
                 comboProducto.getSelectionModel().clearSelection();
 
-            } catch (Exception ex) {
-                new Alert(Alert.AlertType.ERROR, "Error: " + ex.getMessage()).showAndWait();
+            } catch (NumberFormatException ex) {
+                new Alert(Alert.AlertType.WARNING,
+                        "Cantidad y precio deben ser números válidos.").showAndWait();
+            } catch (SQLException ex) {
+                new Alert(Alert.AlertType.ERROR,
+                        "Error al guardar detalle: " + ex.getMessage()).showAndWait();
             }
         });
 
-        btnVolver.setOnAction(e -> new VentanaListarDetallesPedido(stage, idPedido).mostrar());
+        btnVolver.setOnAction(e ->
+                new VentanaListarDetallesPedido(stage, idPedido, idCliente).mostrar());
 
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(20));
         grid.setVgap(10);
         grid.setHgap(10);
         grid.setStyle("-fx-background-color: #f9f9f9;");
+
         grid.add(lblTitulo, 0, 0, 2, 1);
         grid.add(lblProducto, 0, 1);
         grid.add(comboProducto, 1, 1);

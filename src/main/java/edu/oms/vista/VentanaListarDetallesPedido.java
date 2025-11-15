@@ -20,35 +20,43 @@ public class VentanaListarDetallesPedido {
 
     private final Stage stage;
     private final int idPedido;
+    private final int idCliente;
     private final DetallePedidoControlador controlador = new DetallePedidoControlador();
 
-    public VentanaListarDetallesPedido(Stage stage, int idPedido) {
+    public VentanaListarDetallesPedido(Stage stage, int idPedido, int idCliente) {
         this.stage = stage;
         this.idPedido = idPedido;
+        this.idCliente = idCliente;
     }
 
     public void mostrar() {
         TableView<DetallePedido> tabla = new TableView<>();
 
         TableColumn<DetallePedido, Integer> colId = new TableColumn<>("ID");
-        colId.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getIdDetalle()).asObject());
+        colId.setCellValueFactory(c ->
+                new SimpleIntegerProperty(c.getValue().getIdDetalle()).asObject());
         colId.setPrefWidth(60);
 
         TableColumn<DetallePedido, String> colProducto = new TableColumn<>("Producto");
-        colProducto.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getNombreProducto()));
+        colProducto.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getNombreProducto()));
         colProducto.setPrefWidth(200);
 
         TableColumn<DetallePedido, Double> colCantidad = new TableColumn<>("Cantidad");
-        colCantidad.setCellValueFactory(c -> new SimpleDoubleProperty(c.getValue().getCantidad()).asObject());
+        colCantidad.setCellValueFactory(c ->
+                new SimpleDoubleProperty(c.getValue().getCantidad()).asObject());
         colCantidad.setPrefWidth(100);
 
         TableColumn<DetallePedido, Double> colPrecio = new TableColumn<>("Precio Unitario");
-        colPrecio.setCellValueFactory(c -> new SimpleDoubleProperty(c.getValue().getPrecioUnitario()).asObject());
+        colPrecio.setCellValueFactory(c ->
+                new SimpleDoubleProperty(c.getValue().getPrecioUnitario()).asObject());
         colPrecio.setPrefWidth(120);
 
         TableColumn<DetallePedido, Double> colSubtotal = new TableColumn<>("Subtotal");
         colSubtotal.setCellValueFactory(c ->
-                new SimpleDoubleProperty(c.getValue().getCantidad() * c.getValue().getPrecioUnitario()).asObject());
+                new SimpleDoubleProperty(
+                        c.getValue().getCantidad() * c.getValue().getPrecioUnitario()
+                ).asObject());
         colSubtotal.setPrefWidth(120);
 
         TableColumn<DetallePedido, Void> colAcciones = new TableColumn<>("Acciones");
@@ -92,13 +100,15 @@ public class VentanaListarDetallesPedido {
                     FXCollections.observableArrayList(controlador.listarDetalles(idPedido));
             tabla.setItems(datos);
         } catch (SQLException e) {
-            new Alert(Alert.AlertType.ERROR, "Error al cargar detalles: " + e.getMessage()).showAndWait();
+            new Alert(Alert.AlertType.ERROR,
+                    "Error al cargar detalles: " + e.getMessage()).showAndWait();
         }
 
         Button btnAgregar = new Button("Agregar Producto");
         Button btnVolver = new Button("Volver");
 
-        btnAgregar.setOnAction(e -> new VentanaAgregarDetallePedido(stage, idPedido).mostrar());
+        btnAgregar.setOnAction(e ->
+                new VentanaAgregarDetallePedido(stage, idPedido, idCliente).mostrar());
         btnVolver.setOnAction(e -> new VentanaListarPedidos(stage).mostrar());
 
         HBox acciones = new HBox(10, btnAgregar, btnVolver);
