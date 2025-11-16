@@ -1,7 +1,6 @@
 package edu.oms.dao;
 
 import edu.oms.modelo.StockProductoDia;
-
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -23,8 +22,23 @@ public class StockDAO {
                     SELECT SUM(m.cantidad)
                     FROM Movimientos_Stock m
                     WHERE m.id_producto = p.id_producto
-                      AND m.fecha <= ?
-                ), 0) AS stock_en_fecha,
+                      AND m.fecha < ?
+                ), 0) AS stock_remanente,
+                COALESCE((
+                    SELECT SUM(m2.cantidad)
+                    FROM Movimientos_Stock m2
+                    WHERE m2.id_producto = p.id_producto
+                      AND m2.fecha = ?
+                      AND m2.cantidad > 0
+                ), 0) AS stock_producido_hoy,
+                COALESCE((
+                    SELECT -SUM(m3.cantidad)
+                    FROM Movimientos_Stock m3
+                    WHERE m3.id_producto = p.id_producto
+                      AND m3.fecha = ?
+                      AND m3.cantidad < 0
+                      AND m3.tipo = 'SALIDA_MANUAL'
+                ), 0) AS stock_quitado_hoy,
                 COALESCE((
                     SELECT SUM(d.cantidad)
                     FROM Detalles d
@@ -43,15 +57,26 @@ public class StockDAO {
 
             ps.setDate(1, Date.valueOf(fecha));
             ps.setDate(2, Date.valueOf(fecha));
+            ps.setDate(3, Date.valueOf(fecha));
+            ps.setDate(4, Date.valueOf(fecha));
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     int idProd = rs.getInt("id_producto");
                     String nombre = rs.getString("nombre_producto");
-                    double stockEnFecha = rs.getDouble("stock_en_fecha");
+                    double remanente = rs.getDouble("stock_remanente");
+                    double producidoHoy = rs.getDouble("stock_producido_hoy");
+                    double quitadoHoy = rs.getDouble("stock_quitado_hoy");
                     double pedida = rs.getDouble("cantidad_pedida");
 
-                    StockProductoDia spd = new StockProductoDia(idProd, nombre, stockEnFecha, pedida);
+                    StockProductoDia spd = new StockProductoDia(
+                            idProd,
+                            nombre,
+                            remanente,
+                            producidoHoy,
+                            quitadoHoy,
+                            pedida
+                    );
                     lista.add(spd);
                 }
             }
@@ -87,6 +112,45 @@ public class StockDAO {
                 psMov.setString(3, "INGRESO");
                 psMov.setDouble(4, cantidad);
                 psMov.setString(5, "Ingreso manual de stock");
+                psMov.executeUpdate();
+
+                conn.commit();
+            } catch (SQLException ex) {
+                conn.rollback();
+                throw ex;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        }
+    }
+
+    public void quitarStock(int idProducto, double cantidad) throws SQLException {
+
+        String sqlUpdate = "UPDATE Productos " +
+                "SET stock_actual = COALESCE(stock_actual, 0) - ? " +
+                "WHERE id_producto = ?";
+
+        String sqlMovimiento = """
+                INSERT INTO Movimientos_Stock
+                    (id_producto, fecha, tipo, cantidad, observacion)
+                VALUES (?, ?, ?, ?, ?)
+                """;
+
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
+
+            conn.setAutoCommit(false);
+            try (PreparedStatement psUpd = conn.prepareStatement(sqlUpdate);
+                 PreparedStatement psMov = conn.prepareStatement(sqlMovimiento)) {
+
+                psUpd.setDouble(1, cantidad);
+                psUpd.setInt(2, idProducto);
+                psUpd.executeUpdate();
+
+                psMov.setInt(1, idProducto);
+                psMov.setDate(2, Date.valueOf(LocalDate.now()));
+                psMov.setString(3, "SALIDA_MANUAL");
+                psMov.setDouble(4, -cantidad);
+                psMov.setString(5, "Salida manual de stock");
                 psMov.executeUpdate();
 
                 conn.commit();

@@ -3,7 +3,6 @@ package edu.oms.servicio;
 import edu.oms.dao.StockDAO;
 import edu.oms.modelo.DetallePedido;
 import edu.oms.modelo.StockProductoDia;
-
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
@@ -18,6 +17,10 @@ public class StockServicio {
 
     public void agregarStock(int idProducto, double cantidad) throws SQLException {
         dao.agregarStock(idProducto, cantidad);
+    }
+
+    public void quitarStock(int idProducto, double cantidad) throws SQLException {
+        dao.quitarStock(idProducto, cantidad);
     }
 
     public void registrarSalidaPorPedido(LocalDate fechaPedido,
