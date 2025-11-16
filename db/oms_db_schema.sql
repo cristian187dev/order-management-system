@@ -59,12 +59,19 @@ CREATE TABLE Productos (
     FOREIGN KEY (id_unidad) REFERENCES Unidades_medida(id_unidad)
 );
 
+-- NUEVO: Tabla de configuración de productos que usan bolsas
+CREATE TABLE Productos_Bolsas (
+    id_producto INT PRIMARY KEY,
+    usa_bolsas TINYINT(1) NOT NULL DEFAULT 0,
+    FOREIGN KEY (id_producto) REFERENCES Productos(id_producto)
+);
+
 -- NUEVO: Tabla de movimientos de stock
 CREATE TABLE Movimientos_Stock (
     id_movimiento INT PRIMARY KEY AUTO_INCREMENT,
     id_producto INT NOT NULL,
     fecha DATE NOT NULL,
-    tipo VARCHAR(20),              -- 'INGRESO', 'SALIDA_PEDIDO', 'AJUSTE', etc.
+    tipo VARCHAR(20),                 -- 'INGRESO', 'SALIDA_PEDIDO', 'AJUSTE', etc.
     cantidad DECIMAL(10,2) NOT NULL,  -- positivo ingreso, negativo salida
     observacion VARCHAR(255),
     FOREIGN KEY (id_producto) REFERENCES Productos(id_producto)
