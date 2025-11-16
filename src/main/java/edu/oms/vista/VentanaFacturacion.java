@@ -4,6 +4,7 @@ import edu.oms.controlador.ClienteControlador;
 import edu.oms.controlador.PagoControlador;
 import edu.oms.controlador.PedidoControlador;
 import edu.oms.modelo.Cliente;
+import edu.oms.modelo.Pago;
 import edu.oms.modelo.PedidoResumen;
 import edu.oms.modelo.TotalPorDia;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -15,7 +16,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -100,6 +100,29 @@ public class VentanaFacturacion {
 
         tablaPedidos.getColumns().addAll(colId, colF, colH, colTotalPedido, colAcc);
 
+        Label lblHistorialPagos = new Label("Pagos registrados");
+        lblHistorialPagos.setStyle("-fx-font-weight: bold;");
+
+        TableView<Pago> tablaPagos = new TableView<>();
+
+        TableColumn<Pago, String> colFechaPago = new TableColumn<>("Fecha");
+        colFechaPago.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getFechaPago().format(formatoFecha)));
+
+        TableColumn<Pago, Double> colMontoPago = new TableColumn<>("Monto");
+        colMontoPago.setCellValueFactory(c ->
+                new SimpleDoubleProperty(c.getValue().getMonto()).asObject());
+
+        TableColumn<Pago, String> colMetodo = new TableColumn<>("Método");
+        colMetodo.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getMetodoPago()));
+
+        TableColumn<Pago, String> colObs = new TableColumn<>("Observaciones");
+        colObs.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getObservaciones()));
+
+        tablaPagos.getColumns().addAll(colFechaPago, colMontoPago, colMetodo, colObs);
+
         Label lblTotalDeuda = new Label("Total Deuda: $0.00");
         Label lblTotalPagos = new Label("Total Pagos: $0.00");
         Label lblSaldo = new Label("Saldo: $0.00");
@@ -137,6 +160,13 @@ public class VentanaFacturacion {
                 lblTotalPagos.setText("Total Pagos: $" + pagos);
                 lblSaldo.setText("Saldo: $" + saldo);
 
+                // Cargo historial de pagos del cliente
+                List<Pago> listaPagos = pagoControlador.listarPagos(c.getIdCliente());
+                tablaPagos.setItems(FXCollections.observableArrayList(listaPagos));
+
+                // Limpio tabla de pedidos hasta que haga clic en un día
+                tablaPedidos.getItems().clear();
+
             } catch (SQLException ex) {
                 new Alert(Alert.AlertType.ERROR, ex.getMessage()).showAndWait();
             }
@@ -158,7 +188,17 @@ public class VentanaFacturacion {
             }
         });
 
-        VBox root = new VBox(15, lblTitulo, boxCliente, tablaDias, tablaPedidos, boxTotales, boxInferior);
+        VBox root = new VBox(
+                15,
+                lblTitulo,
+                boxCliente,
+                tablaDias,
+                tablaPedidos,
+                lblHistorialPagos,
+                tablaPagos,
+                boxTotales,
+                boxInferior
+        );
         root.setPadding(new Insets(15));
 
         stage.setScene(new Scene(root, 1200, 800));
