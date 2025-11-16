@@ -6,6 +6,7 @@ import edu.oms.controlador.PedidoControlador;
 import edu.oms.controlador.PrecioClienteControlador;
 import edu.oms.controlador.PrecioProductoBaseControlador;
 import edu.oms.controlador.ProductoControlador;
+import edu.oms.controlador.StockControlador;
 import edu.oms.modelo.Cliente;
 import edu.oms.modelo.DetallePedido;
 import edu.oms.modelo.Pedido;
@@ -21,6 +22,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -35,6 +37,7 @@ public class VentanaAgregarPedido {
     private final DetallePedidoControlador detalleControlador = new DetallePedidoControlador();
     private final PrecioClienteControlador precioClienteControlador = new PrecioClienteControlador();
     private final PrecioProductoBaseControlador precioBaseControlador = new PrecioProductoBaseControlador();
+    private final StockControlador stockControlador = new StockControlador();
 
     private final ObservableList<DetallePedido> items = FXCollections.observableArrayList();
 
@@ -233,7 +236,6 @@ public class VentanaAgregarPedido {
 
             try {
 
-                // Crear el pedido
                 Pedido pedido = new Pedido();
                 pedido.setIdCliente(cliente.getIdCliente());
                 pedido.setEstadoPago(comboEstado.getValue());
@@ -247,6 +249,12 @@ public class VentanaAgregarPedido {
                 for (DetallePedido d : items) {
                     detalleControlador.agregarDetalle(idPedido, d.getIdProducto(), d.getCantidad(), d.getPrecioUnitario());
                 }
+
+                stockControlador.registrarSalidaPorPedido(
+                        pedido.getFechaPedido(),
+                        idPedido,
+                        items
+                );
 
                 new Alert(Alert.AlertType.INFORMATION, "Pedido guardado correctamente").showAndWait();
                 new VentanaListarPedidos(stage).mostrar();
