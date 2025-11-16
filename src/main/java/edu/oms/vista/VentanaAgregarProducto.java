@@ -4,9 +4,13 @@ import edu.oms.controlador.ProductoControlador;
 import edu.oms.modelo.UnidadMedida;
 import edu.oms.servicio.UnidadMedidaServicio;
 import javafx.collections.FXCollections;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class VentanaAgregarProducto {
@@ -19,6 +23,12 @@ public class VentanaAgregarProducto {
     }
 
     public void mostrar() {
+
+        // TÍTULO
+        Label lblTitulo = new Label("Agregar Producto");
+        lblTitulo.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+
+        // CAMPOS
         Label lblNombre = new Label("Nombre del Producto:");
         Label lblUnidad = new Label("Unidad de Medida:");
         Label lblStock = new Label("Stock Inicial:");
@@ -33,6 +43,7 @@ public class VentanaAgregarProducto {
             new Alert(Alert.AlertType.ERROR, "Error al cargar unidades: " + e.getMessage()).showAndWait();
         }
 
+        // BOTONES
         Button btnGuardar = new Button("Guardar");
         Button btnVolver = new Button("Volver");
 
@@ -62,19 +73,47 @@ public class VentanaAgregarProducto {
 
         btnVolver.setOnAction(e -> new VentanaProductos(stage).mostrar());
 
+        // GRID DEL FORMULARIO
         GridPane grid = new GridPane();
-        grid.setVgap(10);
-        grid.setHgap(10);
+        grid.setVgap(12);
+        grid.setHgap(15);
+        grid.setAlignment(Pos.CENTER);
+
         grid.add(lblNombre, 0, 0);
         grid.add(txtNombre, 1, 0);
+
         grid.add(lblUnidad, 0, 1);
         grid.add(cmbUnidad, 1, 1);
+
         grid.add(lblStock, 0, 2);
         grid.add(txtStock, 1, 2);
-        grid.add(btnGuardar, 0, 3);
-        grid.add(btnVolver, 1, 3);
 
-        stage.setScene(new Scene(grid, 500, 300));
+        //BOTONES
+        HBox botones = new HBox(15, btnGuardar, btnVolver);
+        botones.setAlignment(Pos.CENTER);
+
+        //MARCO
+        VBox panelConMarco = new VBox(20, lblTitulo, grid, botones);
+        panelConMarco.setAlignment(Pos.CENTER);
+        panelConMarco.setPadding(new Insets(25));
+        panelConMarco.setStyle(
+                "-fx-background-color: white;" +
+                        "-fx-border-color: #b0b0b0;" +
+                        "-fx-border-width: 2;" +
+                        "-fx-border-radius: 10;" +
+                        "-fx-background-radius: 10;"
+        );
+
+        panelConMarco.setMaxWidth(450);
+
+        //LAYOUT PRINCIPAL
+        VBox root = new VBox(panelConMarco);
+        root.setAlignment(Pos.CENTER);
+        root.setPadding(new Insets(20));
+        root.setStyle("-fx-background-color: #e9f5ff;");
+
+        Scene scene = new Scene(root, 1200, 800);
+        stage.setScene(scene);
         stage.setTitle("Agregar Producto");
         stage.show();
     }

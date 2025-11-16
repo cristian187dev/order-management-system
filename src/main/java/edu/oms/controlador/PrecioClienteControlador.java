@@ -2,7 +2,6 @@ package edu.oms.controlador;
 
 import edu.oms.modelo.PrecioCliente;
 import edu.oms.servicio.PrecioClienteServicio;
-
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;

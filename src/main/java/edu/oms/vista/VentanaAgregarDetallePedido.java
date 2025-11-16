@@ -64,7 +64,6 @@ public class VentanaAgregarDetallePedido {
         TextField txtCantidad = new TextField();
         TextField txtPrecio = new TextField();
 
-        // Completar precio automáticamente según cliente y producto
         Runnable completarPrecio = () -> {
             Producto p = comboProducto.getValue();
             if (p == null) return;

@@ -8,6 +8,7 @@ import edu.oms.controlador.PrecioProductoBaseControlador;
 import edu.oms.controlador.ProductoControlador;
 import edu.oms.modelo.Cliente;
 import edu.oms.modelo.DetallePedido;
+import edu.oms.modelo.Pedido;
 import edu.oms.modelo.Producto;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -22,6 +23,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 public class VentanaAgregarPedido {
@@ -48,10 +50,11 @@ public class VentanaAgregarPedido {
 
         ComboBox<Cliente> comboClientes = new ComboBox<>();
         comboClientes.setPrefWidth(280);
-        try {
 
+        try {
             List<Cliente> clientes = clienteControlador.listarClientesActivos();
             comboClientes.setItems(FXCollections.observableArrayList(clientes));
+
             comboClientes.setCellFactory(param -> new ListCell<>() {
                 @Override
                 protected void updateItem(Cliente item, boolean empty) {
@@ -59,6 +62,7 @@ public class VentanaAgregarPedido {
                     setText(empty || item == null ? "" : item.getNombre() + " " + item.getApellido());
                 }
             });
+
             comboClientes.setButtonCell(new ListCell<>() {
                 @Override
                 protected void updateItem(Cliente item, boolean empty) {
@@ -66,6 +70,7 @@ public class VentanaAgregarPedido {
                     setText(empty || item == null ? "" : item.getNombre() + " " + item.getApellido());
                 }
             });
+
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, "Error al cargar clientes: " + e.getMessage()).showAndWait();
         }
@@ -83,9 +88,11 @@ public class VentanaAgregarPedido {
 
         ComboBox<Producto> comboProducto = new ComboBox<>();
         comboProducto.setPrefWidth(280);
+
         try {
             List<Producto> productos = productoControlador.listarProductos();
             comboProducto.setItems(FXCollections.observableArrayList(productos));
+
             comboProducto.setCellFactory(param -> new ListCell<>() {
                 @Override
                 protected void updateItem(Producto item, boolean empty) {
@@ -93,6 +100,7 @@ public class VentanaAgregarPedido {
                     setText(empty || item == null ? "" : item.getNombreProducto());
                 }
             });
+
             comboProducto.setButtonCell(new ListCell<>() {
                 @Override
                 protected void updateItem(Producto item, boolean empty) {
@@ -100,6 +108,7 @@ public class VentanaAgregarPedido {
                     setText(empty || item == null ? "" : item.getNombreProducto());
                 }
             });
+
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, "Error al cargar productos: " + e.getMessage()).showAndWait();
         }
@@ -111,15 +120,19 @@ public class VentanaAgregarPedido {
             Cliente c = comboClientes.getValue();
             Producto p = comboProducto.getValue();
             if (c == null || p == null) return;
+
             try {
                 LocalDate hoy = LocalDate.now();
                 Double precio = precioClienteControlador.obtenerPrecioVigente(c.getIdCliente(), p.getIdProducto(), hoy);
+
                 if (precio == null) {
                     precio = precioBaseControlador.obtenerPrecioBaseVigente(p.getIdProducto(), hoy);
                 }
+
                 if (precio != null && precio > 0) {
                     txtPrecio.setText(String.valueOf(precio));
                 }
+
             } catch (SQLException ex) {
                 new Alert(Alert.AlertType.ERROR, "Error al consultar precio: " + ex.getMessage()).showAndWait();
             }
@@ -139,27 +152,31 @@ public class VentanaAgregarPedido {
                 if (txtPrecio.getText().isBlank()) {
                     completarPrecio.run();
                 }
+
                 double cantidad = Double.parseDouble(txtCantidad.getText());
-                if (cantidad <= 0) throw new NumberFormatException();
                 double precio = Double.parseDouble(txtPrecio.getText());
-                if (precio <= 0) throw new NumberFormatException();
+
+                if (cantidad <= 0 || precio <= 0) throw new NumberFormatException();
 
                 DetallePedido d = new DetallePedido();
                 d.setIdProducto(p.getIdProducto());
                 d.setNombreProducto(p.getNombreProducto());
                 d.setCantidad(cantidad);
                 d.setPrecioUnitario(precio);
+
                 items.add(d);
 
                 comboProducto.getSelectionModel().clearSelection();
                 txtCantidad.clear();
                 txtPrecio.clear();
+
             } catch (NumberFormatException ex) {
                 new Alert(Alert.AlertType.WARNING, "Cantidad y precio deben ser números válidos (> 0).").showAndWait();
             }
         });
 
         TableView<DetallePedido> tabla = new TableView<>(items);
+
         TableColumn<DetallePedido, String> colProd = new TableColumn<>("Producto");
         colProd.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getNombreProducto()));
         colProd.setPrefWidth(220);
@@ -180,12 +197,14 @@ public class VentanaAgregarPedido {
         TableColumn<DetallePedido, Void> colAcc = new TableColumn<>("Acción");
         colAcc.setCellFactory(col -> new TableCell<>() {
             private final Button btnQuitar = new Button("Quitar");
+
             {
                 btnQuitar.setOnAction(e -> {
                     DetallePedido d = getTableView().getItems().get(getIndex());
                     getTableView().getItems().remove(d);
                 });
             }
+
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
@@ -200,27 +219,40 @@ public class VentanaAgregarPedido {
         Button btnVolver = new Button("Volver");
 
         btnListo.setOnAction(e -> {
+
             Cliente cliente = comboClientes.getValue();
             if (cliente == null) {
                 new Alert(Alert.AlertType.WARNING, "Seleccioná un cliente.").showAndWait();
                 return;
             }
+
             if (items.isEmpty()) {
                 new Alert(Alert.AlertType.WARNING, "Agregá al menos un producto.").showAndWait();
                 return;
             }
+
             try {
-                int idPedido = pedidoControlador.agregarPedido(
-                        cliente.getIdCliente(),
-                        comboEstado.getValue(),
-                        txtObs.getText()
-                );
+
+                // Crear el pedido
+                Pedido pedido = new Pedido();
+                pedido.setIdCliente(cliente.getIdCliente());
+                pedido.setEstadoPago(comboEstado.getValue());
+                pedido.setObservaciones(txtObs.getText());
+                pedido.setFechaPedido(LocalDate.now());
+                pedido.setHoraPedido(LocalTime.now());
+                pedido.setNombreCliente(cliente.getNombre() + " " + cliente.getApellido());
+
+                int idPedido = pedidoControlador.guardarPedido(pedido);
+
                 for (DetallePedido d : items) {
                     detalleControlador.agregarDetalle(idPedido, d.getIdProducto(), d.getCantidad(), d.getPrecioUnitario());
                 }
-                new Alert(Alert.AlertType.INFORMATION, "Pedido guardado correctamente.").showAndWait();
+
+                new Alert(Alert.AlertType.INFORMATION, "Pedido guardado correctamente").showAndWait();
                 new VentanaListarPedidos(stage).mostrar();
+
             } catch (Exception ex) {
+                ex.printStackTrace();
                 new Alert(Alert.AlertType.ERROR, "Error al guardar el pedido: " + ex.getMessage()).showAndWait();
             }
         });
@@ -232,17 +264,23 @@ public class VentanaAgregarPedido {
         encabezado.setVgap(10);
         encabezado.setHgap(10);
         encabezado.add(lblTitulo, 0, 0, 2, 1);
-        encabezado.add(lblCliente, 0, 1); encabezado.add(comboClientes, 1, 1);
-        encabezado.add(lblEstadoPago, 0, 2); encabezado.add(comboEstado, 1, 2);
-        encabezado.add(lblObservaciones, 0, 3); encabezado.add(txtObs, 1, 3);
+        encabezado.add(lblCliente, 0, 1);
+        encabezado.add(comboClientes, 1, 1);
+        encabezado.add(lblEstadoPago, 0, 2);
+        encabezado.add(comboEstado, 1, 2);
+        encabezado.add(lblObservaciones, 0, 3);
+        encabezado.add(txtObs, 1, 3);
 
         GridPane agregar = new GridPane();
         agregar.setPadding(new Insets(10));
         agregar.setVgap(8);
         agregar.setHgap(8);
-        agregar.add(new Label("Producto:"), 0, 0); agregar.add(comboProducto, 1, 0);
-        agregar.add(new Label("Cantidad:"), 0, 1); agregar.add(txtCantidad, 1, 1);
-        agregar.add(new Label("Precio Unitario:"), 0, 2); agregar.add(txtPrecio, 1, 2);
+        agregar.add(lblProducto, 0, 0);
+        agregar.add(comboProducto, 1, 0);
+        agregar.add(lblCantidad, 0, 1);
+        agregar.add(txtCantidad, 1, 1);
+        agregar.add(lblPrecio, 0, 2);
+        agregar.add(txtPrecio, 1, 2);
         agregar.add(btnAgregarItem, 1, 3);
 
         HBox acciones = new HBox(10, btnListo, btnVolver);
@@ -253,10 +291,8 @@ public class VentanaAgregarPedido {
         root.setCenter(tabla);
         root.setLeft(agregar);
         root.setBottom(acciones);
-        BorderPane.setMargin(encabezado, new Insets(5));
-        BorderPane.setMargin(tabla, new Insets(10));
 
-        stage.setScene(new Scene(root, 1100, 600));
+        stage.setScene(new Scene(root, 1200, 800));
         stage.setTitle("Agregar Pedido");
         stage.show();
     }

@@ -65,9 +65,11 @@ public class VentanaListarPreciosEspeciales {
             {
                 btnBorrar.setOnAction(e -> {
                     PrecioCliente pc = getTableView().getItems().get(getIndex());
-                    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                    Alert confirm = new Alert(
+                            Alert.AlertType.CONFIRMATION,
                             "¿Eliminar precio especial del cliente \"" + pc.getNombreCliente() + "\"?",
-                            ButtonType.YES, ButtonType.NO);
+                            ButtonType.YES, ButtonType.NO
+                    );
                     confirm.setHeaderText(null);
                     confirm.showAndWait().ifPresent(bt -> {
                         if (bt == ButtonType.YES) {
@@ -108,7 +110,7 @@ public class VentanaListarPreciosEspeciales {
         root.setBottom(btnVolver);
         BorderPane.setMargin(btnVolver, new Insets(10));
 
-        stage.setScene(new Scene(root, 900, 450));
+        stage.setScene(new Scene(root, 1200, 800));
         stage.setTitle("Listado de Precios Especiales por Cliente");
         stage.show();
     }

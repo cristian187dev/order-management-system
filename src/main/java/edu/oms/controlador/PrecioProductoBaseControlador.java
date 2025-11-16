@@ -2,7 +2,6 @@ package edu.oms.controlador;
 
 import edu.oms.modelo.PrecioProductoBase;
 import edu.oms.servicio.PrecioProductoBaseServicio;
-
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;

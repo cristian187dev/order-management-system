@@ -61,9 +61,11 @@ public class VentanaListarPreciosBase {
             {
                 btnBorrar.setOnAction(e -> {
                     PrecioProductoBase pb = getTableView().getItems().get(getIndex());
-                    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                    Alert confirm = new Alert(
+                            Alert.AlertType.CONFIRMATION,
                             "¿Seguro que querés eliminar el precio base de \"" + pb.getNombreProducto() + "\"?",
-                            ButtonType.YES, ButtonType.NO);
+                            ButtonType.YES, ButtonType.NO
+                    );
                     confirm.setHeaderText(null);
                     confirm.showAndWait().ifPresent(bt -> {
                         if (bt == ButtonType.YES) {
@@ -104,7 +106,7 @@ public class VentanaListarPreciosBase {
         root.setBottom(btnVolver);
         BorderPane.setMargin(btnVolver, new Insets(10));
 
-        stage.setScene(new Scene(root, 800, 450));
+        stage.setScene(new Scene(root, 1200, 800));
         stage.setTitle("Listado de Precios Base");
         stage.show();
     }

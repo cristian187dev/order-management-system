@@ -74,7 +74,7 @@ public class VentanaListarProductos {
         root.setCenter(tabla);
         root.setBottom(btnVolver);
 
-        stage.setScene(new Scene(root, 800, 400));
+        stage.setScene(new Scene(root, 1200, 800));
         stage.setTitle("Listado de Productos");
         stage.show();
     }

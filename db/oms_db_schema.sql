@@ -156,7 +156,8 @@ CREATE TABLE Pagos (
     id_cliente INT,
     id_factura INT,
     fecha_pago DATE,
-    monto_pago DECIMAL(10,2),
+    monto DECIMAL(10,2),
+    observaciones VARCHAR(255),
     metodo_pago VARCHAR(50),
     FOREIGN KEY (id_cliente) REFERENCES Clientes(id_cliente),
     FOREIGN KEY (id_factura) REFERENCES Facturas(id_factura)

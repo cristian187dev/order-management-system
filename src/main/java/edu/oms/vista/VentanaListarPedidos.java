@@ -12,7 +12,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -40,13 +39,13 @@ public class VentanaListarPedidos {
         colCliente.setPrefWidth(150);
 
         TableColumn<Pedido, String> colFecha = new TableColumn<>("Fecha");
-        colFecha.setCellValueFactory(c -> new SimpleStringProperty(
-                c.getValue().getFechaPedido().format(formatoFecha)));
+        colFecha.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getFechaPedido().format(formatoFecha)));
         colFecha.setPrefWidth(100);
 
         TableColumn<Pedido, String> colHora = new TableColumn<>("Hora");
-        colHora.setCellValueFactory(c -> new SimpleStringProperty(
-                c.getValue().getHoraPedido().format(formatoHora)));
+        colHora.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getHoraPedido().format(formatoHora)));
         colHora.setPrefWidth(90);
 
         TableColumn<Pedido, String> colEstado = new TableColumn<>("Estado");
@@ -131,12 +130,13 @@ public class VentanaListarPedidos {
 
         Button btnVolver = new Button("Volver");
         btnVolver.setOnAction(e -> new VentanaPedidos(stage).mostrar());
+
         BorderPane bottom = new BorderPane();
         bottom.setPadding(new Insets(10));
         bottom.setRight(btnVolver);
         root.setBottom(bottom);
 
-        stage.setScene(new Scene(root, 1050, 550));
+        stage.setScene(new Scene(root, 1200, 800));
         stage.setTitle("Listado de Pedidos");
         stage.show();
 

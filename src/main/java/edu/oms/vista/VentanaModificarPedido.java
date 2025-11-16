@@ -43,12 +43,14 @@ public class VentanaModificarPedido {
             try {
                 pedido.setEstadoPago(comboEstado.getValue());
                 pedido.setObservaciones(txtObservaciones.getText());
+
                 controlador.modificarPedido(pedido);
 
                 new Alert(Alert.AlertType.INFORMATION, "Pedido actualizado correctamente.").showAndWait();
                 new VentanaListarPedidos(stage).mostrar();
             } catch (Exception ex) {
-                new Alert(Alert.AlertType.ERROR, "Error al actualizar pedido: " + ex.getMessage()).showAndWait();
+                new Alert(Alert.AlertType.ERROR,
+                        "Error al actualizar pedido: " + ex.getMessage()).showAndWait();
             }
         });
 
@@ -58,7 +60,6 @@ public class VentanaModificarPedido {
         grid.setPadding(new Insets(20));
         grid.setVgap(10);
         grid.setHgap(10);
-        grid.setStyle("-fx-background-color: #f0f8ff;");
 
         grid.add(lblTitulo, 0, 0, 2, 1);
         grid.add(lblCliente, 0, 1);

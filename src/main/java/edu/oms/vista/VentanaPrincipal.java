@@ -1,5 +1,7 @@
 package edu.oms.vista;
 
+import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
@@ -14,31 +16,30 @@ public class VentanaPrincipal {
     }
 
     public void mostrar() {
-        // Botones principales
+
         Button btnClientes = new Button("Clientes");
-        Button btnProductos = new Button("Productos");
-        Button btnPedidos = new Button("Pedidos");
-        Button btnSalir = new Button("Salir");
-
-        // Acciones
         btnClientes.setOnAction(e -> new VentanaClientes(stage).mostrar());
+
+        Button btnProductos = new Button("Productos");
         btnProductos.setOnAction(e -> new VentanaProductos(stage).mostrar());
+
+        Button btnPedidos = new Button("Pedidos");
         btnPedidos.setOnAction(e -> new VentanaPedidos(stage).mostrar());
-        btnSalir.setOnAction(e -> stage.close());
 
-        // Diseño
-        VBox layout = new VBox(25);
-        layout.setStyle("""
-            -fx-padding: 40;
-            -fx-alignment: center;
-            -fx-background-color: #f0f0f0;
-        """);
-        layout.getChildren().addAll(btnClientes, btnProductos, btnPedidos, btnSalir);
+        Button btnFacturacion = new Button("Facturación");
+        btnFacturacion.setOnAction(e -> new VentanaFacturacion(stage).mostrar());
 
-        // Escena
-        Scene scene = new Scene(layout, 1200, 800);
-        stage.setTitle("Sistema de Gestión - Menú Principal");
+        Button btnSalir = new Button("Salir");
+        btnSalir.setOnAction(e -> Platform.exit());
+
+        VBox root = new VBox(30, btnClientes, btnProductos, btnPedidos, btnFacturacion, btnSalir);
+        root.setPadding(new Insets(30));
+        root.setStyle("-fx-background-color: #e9f5ff; -fx-alignment: center;");
+
+        Scene scene = new Scene(root, 1200, 800);
+
         stage.setScene(scene);
+        stage.setTitle("Menú Principal");
         stage.show();
     }
 }

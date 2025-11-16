@@ -49,7 +49,7 @@ public class VentanaListarClientes {
         root.setCenter(tabs);
         root.setBottom(pie);
 
-        stage.setScene(new Scene(root, 1000, 520));
+        stage.setScene(new Scene(root, 1200, 800));
         stage.setTitle("Listado de Clientes");
         stage.show();
 

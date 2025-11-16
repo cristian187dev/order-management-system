@@ -2,7 +2,6 @@ package edu.oms.servicio;
 
 import edu.oms.dao.PrecioClienteDAO;
 import edu.oms.modelo.PrecioCliente;
-
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;

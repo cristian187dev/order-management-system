@@ -3,20 +3,25 @@ package edu.oms.modelo;
 import java.time.LocalDate;
 
 public class Cliente {
+
     private int idCliente;
     private String nombre;
     private String apellido;
     private String telefono;
     private String direccion;
     private String cuil;
-    private String estadoUsuario;   // Inicialmente al crearse un cliente sera activo
+    private String estadoUsuario;
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
 
-    public Cliente() {}
+    public Cliente() {
+    }
 
-    public Cliente(String nombre, String apellido, String telefono, String direccion,
-                   String cuil, String estadoUsuario, LocalDate fechaInicio, LocalDate fechaFin) {
+    public Cliente(int idCliente, String nombre, String apellido, String telefono,
+                   String direccion, String cuil, String estadoUsuario,
+                   LocalDate fechaInicio, LocalDate fechaFin) {
+
+        this.idCliente = idCliente;
         this.nombre = nombre;
         this.apellido = apellido;
         this.telefono = telefono;
@@ -27,38 +32,85 @@ public class Cliente {
         this.fechaFin = fechaFin;
     }
 
-    public Cliente(int idCliente, String nombre, String apellido, String telefono,
-                   String direccion, String cuil, String estadoUsuario,
-                   LocalDate fechaInicio, LocalDate fechaFin) {
-        this(nombre, apellido, telefono, direccion, cuil, estadoUsuario, fechaInicio, fechaFin);
+    //GETTERS Y SETTERS
+
+    public int getIdCliente() {
+        return idCliente;
+    }
+
+    public void setIdCliente(int idCliente) {
         this.idCliente = idCliente;
     }
 
-    // Getters & Setters
-    public int getIdCliente() { return idCliente; }
-    public void setIdCliente(int idCliente) { this.idCliente = idCliente; }
+    public String getNombre() {
+        return nombre;
+    }
 
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-    public String getApellido() { return apellido; }
-    public void setApellido(String apellido) { this.apellido = apellido; }
+    public String getApellido() {
+        return apellido;
+    }
 
-    public String getTelefono() { return telefono; }
-    public void setTelefono(String telefono) { this.telefono = telefono; }
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
+    }
 
-    public String getDireccion() { return direccion; }
-    public void setDireccion(String direccion) { this.direccion = direccion; }
+    public String getTelefono() {
+        return telefono;
+    }
 
-    public String getCuil() { return cuil; }
-    public void setCuil(String cuil) { this.cuil = cuil; }
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
 
-    public String getEstadoUsuario() { return estadoUsuario; }
-    public void setEstadoUsuario(String estadoUsuario) { this.estadoUsuario = estadoUsuario; }
+    public String getDireccion() {
+        return direccion;
+    }
 
-    public LocalDate getFechaInicio() { return fechaInicio; }
-    public void setFechaInicio(LocalDate fechaInicio) { this.fechaInicio = fechaInicio; }
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
 
-    public LocalDate getFechaFin() { return fechaFin; }
-    public void setFechaFin(LocalDate fechaFin) { this.fechaFin = fechaFin; }
+    public String getCuil() {
+        return cuil;
+    }
+
+    public void setCuil(String cuil) {
+        this.cuil = cuil;
+    }
+
+    public String getEstadoUsuario() {
+        return estadoUsuario;
+    }
+
+    public void setEstadoUsuario(String estadoUsuario) {
+        this.estadoUsuario = estadoUsuario;
+    }
+
+    public LocalDate getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public void setFechaInicio(LocalDate fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
+    public LocalDate getFechaFin() {
+        return fechaFin;
+    }
+
+    public void setFechaFin(LocalDate fechaFin) {
+        this.fechaFin = fechaFin;
+    }
+
+    // toString
+
+    @Override
+    public String toString() {
+
+        return nombre + " " + apellido;
+    }
 }

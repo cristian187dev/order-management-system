@@ -5,9 +5,12 @@ import edu.oms.controlador.ProductoControlador;
 import edu.oms.modelo.Producto;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -24,7 +27,12 @@ public class VentanaAgregarPrecioBase {
     }
 
     public void mostrar() {
+
+        //TITULO
         Label lblTitulo = new Label("Agregar Precio Base de Producto");
+        lblTitulo.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+
+        //ETIQUETAS Y CONTROLES
         Label lblProducto = new Label("Producto:");
         Label lblPrecio = new Label("Precio Base:");
         Label lblInicio = new Label("Fecha Inicio:");
@@ -60,10 +68,13 @@ public class VentanaAgregarPrecioBase {
             }
         });
 
+        //ACCIONES BOTONES
         btnGuardar.setOnAction(e -> {
             try {
                 Producto seleccionado = cmbProducto.getValue();
-                if (seleccionado == null) throw new IllegalArgumentException("Seleccione un producto.");
+                if (seleccionado == null) {
+                    throw new IllegalArgumentException("Seleccione un producto.");
+                }
                 double precio = Double.parseDouble(txtPrecio.getText());
 
                 controlador.agregarPrecioBase(seleccionado.getIdProducto(), precio, dpInicio.getValue(), null);
@@ -82,17 +93,42 @@ public class VentanaAgregarPrecioBase {
 
         btnVolver.setOnAction(e -> new VentanaPreciosBase(stage).mostrar());
 
+        //GRID DEL FORMULARIO
         GridPane grid = new GridPane();
-        grid.setPadding(new Insets(20));
-        grid.setVgap(10);
-        grid.setHgap(10);
-        grid.add(lblTitulo, 0, 0, 2, 1);
-        grid.add(lblProducto, 0, 1); grid.add(cmbProducto, 1, 1);
-        grid.add(lblPrecio, 0, 2); grid.add(txtPrecio, 1, 2);
-        grid.add(lblInicio, 0, 3); grid.add(dpInicio, 1, 3);
-        grid.add(btnGuardar, 0, 4); grid.add(btnVolver, 1, 4);
+        grid.setPadding(new Insets(10));
+        grid.setVgap(12);
+        grid.setHgap(15);
+        grid.setAlignment(Pos.CENTER);
 
-        stage.setScene(new Scene(grid, 500, 350));
+        grid.add(lblProducto, 0, 0); grid.add(cmbProducto, 1, 0);
+        grid.add(lblPrecio, 0, 1);   grid.add(txtPrecio, 1, 1);
+        grid.add(lblInicio, 0, 2);   grid.add(dpInicio, 1, 2);
+
+        //BOTONES
+        HBox botones = new HBox(15, btnGuardar, btnVolver);
+        botones.setAlignment(Pos.CENTER);
+
+        //PANEL
+        VBox panelConMarco = new VBox(20, lblTitulo, grid, botones);
+        panelConMarco.setAlignment(Pos.CENTER);
+        panelConMarco.setPadding(new Insets(25));
+        panelConMarco.setStyle(
+                "-fx-background-color: white;" +
+                        "-fx-border-color: #b0b0b0;" +
+                        "-fx-border-width: 2;" +
+                        "-fx-border-radius: 10;" +
+                        "-fx-background-radius: 10;"
+        );
+        panelConMarco.setMaxWidth(500); // ancho ajustado al contenido
+
+        //CONTENEDOR PRINCIPAL
+        VBox root = new VBox(panelConMarco);
+        root.setAlignment(Pos.CENTER);
+        root.setPadding(new Insets(20));
+        root.setStyle("-fx-background-color: #e9f5ff;");
+
+        Scene scene = new Scene(root, 1200, 800);
+        stage.setScene(scene);
         stage.setTitle("Agregar Precio Base");
         stage.show();
     }

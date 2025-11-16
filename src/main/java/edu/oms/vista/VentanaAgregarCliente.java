@@ -1,11 +1,17 @@
 package edu.oms.vista;
 
 import edu.oms.controlador.ClienteControlador;
+import edu.oms.modelo.Cliente;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
+import java.time.LocalDate;
 
 public class VentanaAgregarCliente {
 
@@ -17,82 +23,103 @@ public class VentanaAgregarCliente {
     }
 
     public void mostrar() {
-        Label lblTitulo     = new Label("Agregar Cliente");
-        Label lblNombre     = new Label("Nombre:");
-        Label lblApellido   = new Label("Apellido:");
-        Label lblTelefono   = new Label("Teléfono:");
-        Label lblDireccion  = new Label("Dirección:");
-        Label lblCuil       = new Label("CUIL:");
 
-        TextField txtNombre    = new TextField();
-        TextField txtApellido  = new TextField();
-        TextField txtTelefono  = new TextField();
+        // TITULO
+        Label lblTitulo = new Label("Agregar Cliente");
+        lblTitulo.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+
+        // CAMPOS
+        Label lblNombre = new Label("Nombre:");
+        TextField txtNombre = new TextField();
+
+        Label lblApellido = new Label("Apellido:");
+        TextField txtApellido = new TextField();
+
+        Label lblTelefono = new Label("Teléfono:");
+        TextField txtTelefono = new TextField();
+
+        Label lblDireccion = new Label("Dirección:");
         TextField txtDireccion = new TextField();
-        TextField txtCuil      = new TextField();
 
+        Label lblCuil = new Label("CUIL:");
+        TextField txtCuil = new TextField();
+
+        // BOTONES
         Button btnGuardar = new Button("Guardar");
-        Button btnVolver  = new Button("Volver");
+        Button btnVolver = new Button("Volver");
 
         btnGuardar.setOnAction(e -> {
             try {
-                if (txtNombre.getText().isBlank() || txtApellido.getText().isBlank() || txtTelefono.getText().isBlank()) {
-                    Alert a = new Alert(Alert.AlertType.WARNING);
-                    a.setTitle("Campos obligatorios");
-                    a.setHeaderText(null);
-                    a.setContentText("Completá Nombre, Apellido y Teléfono!.");
-                    a.showAndWait();
-                    return;
-                }
+                Cliente cliente = new Cliente();
+                cliente.setNombre(txtNombre.getText());
+                cliente.setApellido(txtApellido.getText());
+                cliente.setTelefono(txtTelefono.getText());
+                cliente.setDireccion(txtDireccion.getText());
+                cliente.setCuil(txtCuil.getText());
+                cliente.setEstadoUsuario("ACTIVO");
+                cliente.setFechaInicio(LocalDate.now());
+                cliente.setFechaFin(null);
 
-                controlador.agregarCliente(
-                        txtNombre.getText(),
-                        txtApellido.getText(),
-                        txtTelefono.getText(),
-                        txtDireccion.getText(),
-                        txtCuil.getText()
-                );
+                controlador.agregarCliente(cliente);
 
-                Alert ok = new Alert(Alert.AlertType.INFORMATION);
-                ok.setTitle("Éxito");
-                ok.setHeaderText(null);
-                ok.setContentText("Cliente agregado correctamente.\n");
-                ok.showAndWait();
-
-                txtNombre.clear();
-                txtApellido.clear();
-                txtTelefono.clear();
-                txtDireccion.clear();
-                txtCuil.clear();
+                new Alert(Alert.AlertType.INFORMATION, "Cliente agregado correctamente").showAndWait();
+                new VentanaClientes(stage).mostrar();
 
             } catch (Exception ex) {
-                Alert err = new Alert(Alert.AlertType.ERROR);
-                err.setTitle("Error");
-                err.setHeaderText("No se pudo guardar el cliente");
-                err.setContentText(ex.getMessage());
-                err.showAndWait();
+                new Alert(Alert.AlertType.ERROR, "Error: " + ex.getMessage()).showAndWait();
             }
         });
 
-        btnVolver.setOnAction(e -> {
-            VentanaClientes vc = new VentanaClientes(stage);
-            vc.mostrar();
-        });
+        btnVolver.setOnAction(e -> new VentanaClientes(stage).mostrar());
 
+        // FORMULARIO GRID
         GridPane grid = new GridPane();
-        grid.setPadding(new Insets(20));
-        grid.setVgap(10);
-        grid.setHgap(10);
-        grid.setStyle("-fx-background-color: #f8f9fa;");
+        grid.setPadding(new Insets(10));
+        grid.setHgap(15);
+        grid.setVgap(12);
+        grid.setAlignment(Pos.CENTER);
 
-        grid.add(lblTitulo,    0, 0, 2, 1);
-        grid.add(lblNombre,    0, 1); grid.add(txtNombre,    1, 1);
-        grid.add(lblApellido,  0, 2); grid.add(txtApellido,  1, 2);
-        grid.add(lblTelefono,  0, 3); grid.add(txtTelefono,  1, 3);
-        grid.add(lblDireccion, 0, 4); grid.add(txtDireccion, 1, 4);
-        grid.add(lblCuil,      0, 5); grid.add(txtCuil,      1, 5);
-        grid.add(btnGuardar,   0, 6); grid.add(btnVolver,    1, 6);
+        grid.add(lblNombre, 0, 0);
+        grid.add(txtNombre, 1, 0);
 
-        stage.setScene(new Scene(grid, 520, 350));
+        grid.add(lblApellido, 0, 1);
+        grid.add(txtApellido, 1, 1);
+
+        grid.add(lblTelefono, 0, 2);
+        grid.add(txtTelefono, 1, 2);
+
+        grid.add(lblDireccion, 0, 3);
+        grid.add(txtDireccion, 1, 3);
+
+        grid.add(lblCuil, 0, 4);
+        grid.add(txtCuil, 1, 4);
+
+        // BOTONES
+        HBox botones = new HBox(15, btnGuardar, btnVolver);
+        botones.setAlignment(Pos.CENTER);
+
+        //MARCO
+        VBox panelConMarco = new VBox(20, lblTitulo, grid, botones);
+        panelConMarco.setAlignment(Pos.CENTER);
+        panelConMarco.setPadding(new Insets(25));
+        panelConMarco.setStyle(
+                "-fx-background-color: white;" +
+                        "-fx-border-color: #b0b0b0;" +
+                        "-fx-border-width: 2;" +
+                        "-fx-border-radius: 10;" +
+                        "-fx-background-radius: 10;"
+        );
+
+        panelConMarco.setMaxWidth(450);
+
+        //CONTENEDOR PRINCIPAL
+        VBox root = new VBox(panelConMarco);
+        root.setAlignment(Pos.CENTER);
+        root.setPadding(new Insets(20));
+        root.setStyle("-fx-background-color: #e9f5ff;");
+
+        Scene scene = new Scene(root, 1200, 800);
+        stage.setScene(scene);
         stage.setTitle("Agregar Cliente");
         stage.show();
     }
