@@ -59,6 +59,17 @@ CREATE TABLE Productos (
     FOREIGN KEY (id_unidad) REFERENCES Unidades_medida(id_unidad)
 );
 
+-- NUEVO: Tabla de movimientos de stock
+CREATE TABLE Movimientos_Stock (
+    id_movimiento INT PRIMARY KEY AUTO_INCREMENT,
+    id_producto INT NOT NULL,
+    fecha DATE NOT NULL,
+    tipo VARCHAR(20),              -- 'INGRESO', 'SALIDA_PEDIDO', 'AJUSTE', etc.
+    cantidad DECIMAL(10,2) NOT NULL,  -- positivo ingreso, negativo salida
+    observacion VARCHAR(255),
+    FOREIGN KEY (id_producto) REFERENCES Productos(id_producto)
+);
+
 -- Tabla: Precios_Productos_Base
 CREATE TABLE Precios_Productos_Base (
     id_precio_base INT PRIMARY KEY AUTO_INCREMENT,

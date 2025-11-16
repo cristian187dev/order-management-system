@@ -28,11 +28,21 @@ public class VentanaPrincipal {
 
         Button btnFacturacion = new Button("Facturación");
         btnFacturacion.setOnAction(e -> new VentanaFacturacion(stage).mostrar());
+        Button btnControlStock = new Button("Control de Stock");
+        btnControlStock.setOnAction(e -> new VentanaControlStock(stage).mostrar());
 
         Button btnSalir = new Button("Salir");
         btnSalir.setOnAction(e -> Platform.exit());
 
-        VBox root = new VBox(30, btnClientes, btnProductos, btnPedidos, btnFacturacion, btnSalir);
+        VBox root = new VBox(
+                30,
+                btnClientes,
+                btnProductos,
+                btnPedidos,
+                btnFacturacion,
+                btnControlStock,   // ← lo agregamos al layout
+                btnSalir
+        );
         root.setPadding(new Insets(30));
         root.setStyle("-fx-background-color: #e9f5ff; -fx-alignment: center;");
 

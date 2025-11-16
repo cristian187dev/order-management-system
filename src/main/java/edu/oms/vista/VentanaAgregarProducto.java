@@ -24,26 +24,21 @@ public class VentanaAgregarProducto {
 
     public void mostrar() {
 
-        // TÍTULO
         Label lblTitulo = new Label("Agregar Producto");
         lblTitulo.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
 
-        // CAMPOS
         Label lblNombre = new Label("Nombre del Producto:");
         Label lblUnidad = new Label("Unidad de Medida:");
-        Label lblStock = new Label("Stock Inicial:");
 
         TextField txtNombre = new TextField();
-        TextField txtStock = new TextField();
-
         ComboBox<UnidadMedida> cmbUnidad = new ComboBox<>();
+
         try {
             cmbUnidad.setItems(FXCollections.observableArrayList(unidadServicio.listarActivas()));
         } catch (Exception e) {
             new Alert(Alert.AlertType.ERROR, "Error al cargar unidades: " + e.getMessage()).showAndWait();
         }
 
-        // BOTONES
         Button btnGuardar = new Button("Guardar");
         Button btnVolver = new Button("Volver");
 
@@ -58,12 +53,11 @@ public class VentanaAgregarProducto {
                 controlador.agregarProducto(
                         txtNombre.getText(),
                         seleccionada.getIdUnidad(),
-                        Double.parseDouble(txtStock.getText())
+                        0
                 );
 
                 new Alert(Alert.AlertType.INFORMATION, "Producto agregado correctamente.").showAndWait();
                 txtNombre.clear();
-                txtStock.clear();
                 cmbUnidad.getSelectionModel().clearSelection();
 
             } catch (Exception ex) {
@@ -73,7 +67,6 @@ public class VentanaAgregarProducto {
 
         btnVolver.setOnAction(e -> new VentanaProductos(stage).mostrar());
 
-        // GRID DEL FORMULARIO
         GridPane grid = new GridPane();
         grid.setVgap(12);
         grid.setHgap(15);
@@ -85,14 +78,9 @@ public class VentanaAgregarProducto {
         grid.add(lblUnidad, 0, 1);
         grid.add(cmbUnidad, 1, 1);
 
-        grid.add(lblStock, 0, 2);
-        grid.add(txtStock, 1, 2);
-
-        //BOTONES
         HBox botones = new HBox(15, btnGuardar, btnVolver);
         botones.setAlignment(Pos.CENTER);
 
-        //MARCO
         VBox panelConMarco = new VBox(20, lblTitulo, grid, botones);
         panelConMarco.setAlignment(Pos.CENTER);
         panelConMarco.setPadding(new Insets(25));
@@ -103,10 +91,8 @@ public class VentanaAgregarProducto {
                         "-fx-border-radius: 10;" +
                         "-fx-background-radius: 10;"
         );
-
         panelConMarco.setMaxWidth(450);
 
-        //LAYOUT PRINCIPAL
         VBox root = new VBox(panelConMarco);
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(20));
