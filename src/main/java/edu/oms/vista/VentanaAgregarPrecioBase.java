@@ -119,7 +119,7 @@ public class VentanaAgregarPrecioBase {
                         "-fx-border-radius: 10;" +
                         "-fx-background-radius: 10;"
         );
-        panelConMarco.setMaxWidth(500); // ancho ajustado al contenido
+        panelConMarco.setMaxWidth(500);
 
         //CONTENEDOR PRINCIPAL
         VBox root = new VBox(panelConMarco);

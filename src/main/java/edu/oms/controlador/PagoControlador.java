@@ -14,11 +14,11 @@ public class PagoControlador {
     public void registrarPago(int idCliente, double monto, String observaciones) throws SQLException {
         Pago p = new Pago();
         p.setIdCliente(idCliente);
-        p.setIdFactura(0); // por ahora sin factura asociada
+        p.setIdFactura(0);
         p.setFechaPago(LocalDate.now());
         p.setMonto(monto);
         p.setObservaciones(observaciones);
-        p.setMetodoPago(""); // opcional, por ahora vacío
+        p.setMetodoPago("");
 
         servicio.registrarPago(p);
     }

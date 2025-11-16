@@ -2,7 +2,6 @@ package edu.oms.servicio;
 
 import edu.oms.dao.ClienteDAO;
 import edu.oms.modelo.Cliente;
-
 import java.sql.SQLException;
 import java.util.List;
 

@@ -32,8 +32,6 @@ public class VentanaPagos {
                 "Cliente: " + cliente.getNombre() + " " + cliente.getApellido()
         );
 
-        //FORM PAGO NUEVO
-
         Label lblMonto = new Label("Monto:");
         TextField txtMonto = new TextField();
 
