@@ -1,6 +1,8 @@
 package edu.oms.dao;
 
 import edu.oms.modelo.Cliente;
+import edu.oms.excepciones.DatabaseException;
+
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -33,6 +35,17 @@ public class ClienteDAO {
                 ps.setNull(8, Types.DATE);
 
             ps.executeUpdate();
+
+        } catch (SQLException e) {
+
+
+            if (e.getErrorCode() == 1062) {
+                throw new DatabaseException(
+                        "El teléfono o CUIL ya están registrados para otro cliente.", e);
+            }
+
+
+            throw new DatabaseException("Error al insertar el cliente en la base de datos.", e);
         }
     }
 
@@ -50,8 +63,10 @@ public class ClienteDAO {
 
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setString(1, estado);
             ResultSet rs = ps.executeQuery();
+
             while (rs.next()) {
                 Cliente c = new Cliente();
                 c.setIdCliente(rs.getInt("id_cliente"));
@@ -67,26 +82,40 @@ public class ClienteDAO {
                 c.setFechaFin(ff != null ? ff.toLocalDate() : null);
                 lista.add(c);
             }
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Error al obtener los clientes por estado desde la base de datos.", e);
         }
+
         return lista;
     }
 
     public void desactivarCliente(int idCliente) throws SQLException {
         String sql = "UPDATE Clientes SET estado_usuario='INACTIVO', fecha_fin=? WHERE id_cliente=?";
+
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setDate(1, Date.valueOf(LocalDate.now()));
             ps.setInt(2, idCliente);
             ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Error al desactivar el cliente en la base de datos.", e);
         }
     }
 
     public void activarCliente(int idCliente) throws SQLException {
         String sql = "UPDATE Clientes SET estado_usuario='ACTIVO', fecha_fin=NULL WHERE id_cliente=?";
+
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setInt(1, idCliente);
             ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Error al activar el cliente en la base de datos.", e);
         }
     }
 }
